@@ -22,6 +22,7 @@ Route::group(['prefix' => 'task', 'middleware' => 'auth:api'], function () {
     Route::get('/', [TaskController::class, 'getAll']);
     Route::post('/', [TaskController::class, 'create']);
     Route::put('/{id}', [TaskController::class, 'update']);
+    Route::get('/{id}', [TaskController::class, 'show']);
 });
 
 Route::group(['middleware' => 'guest:api'], function () {

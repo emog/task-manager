@@ -121,4 +121,30 @@ class TaskTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['id' => 'The selected id is invalid.']);
     }
+
+    public function test_get_user_task()
+    {
+        $user     = $this->signIn();
+        $task     = Task::factory(['user_id' => $user->id])->create();
+        $response = $this->get('/api/v1/task/' . $task->id, self::REQUEST_HEADERS);
+
+        $response->assertOk();
+        $response->assertJsonStructure(['data' => ['id', 'name', 'description', 'name', 'updated_at', 'created_at']]);
+    }
+
+    public function test_user_cannot_get_other_user_task()
+    {
+        $this->signIn();
+        $task     = Task::factory()->create();
+        $response = $this->get('/api/v1/task/' . $task->id, self::REQUEST_HEADERS);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['id' => 'The selected id is invalid.']);
+    }
+
+    public function test_guest_cannot_get_task()
+    {
+        $task     = Task::factory()->create();
+        $response = $this->get('/api/v1/task/' . $task->id, self::REQUEST_HEADERS);
+        $response->assertStatus(401);
+    }
 }

@@ -10,7 +10,12 @@ class TaskRepositoryEloquent implements TaskRepositoryInterface
 
     public function getAll()
     {
-        return Task::orderBy('created_at', 'asc')->orderBy('completed', 'desc')->get();
+        return Task::orderBy('created_at', 'desc')->orderBy('completed', 'desc')->get();
+    }
+
+    public function getById(int $id)
+    {
+        return Task::findOrFail($id);
     }
 
     /**

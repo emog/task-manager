@@ -35,7 +35,8 @@ class Task extends Model
     use HasFactory;
 
     protected $casts = [
-        'completed' => 'bool'
+        'completed' => 'bool',
+        'created_at' => 'date:m/d/Y'
     ];
 
     protected $hidden = [

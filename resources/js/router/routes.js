@@ -4,6 +4,10 @@ const Tasks = () => import('./../pages/Tasks');
 
 const routes = [
     {
+        path: '/',
+        component: Tasks
+    },
+    {
         path: '/login',
         name: 'login',
         component: Login

@@ -16,19 +16,15 @@ axios.interceptors.request.use(request => {
 
 
 axios.interceptors.response.use(response => response, error => {
-    // const { status } = error.response
-    // const { method } = error.config
-    //
-    //
-    //
-    // if (status === 401 && store.getters['auth/check']) {
-    //     store.commit('auth/LOGOUT')
-    //     router.push({ name: 'login' })
-    // }
-    //
-    // if (status === 403 && store.getters['auth/check']) {
-    //
-    // }
+    const { status } = error.response
+    const { method } = error.config
+
+
+
+    if (status === 401 || !store.getters['auth/check']) {
+        store.commit('auth/LOGOUT')
+        router.push({ name: 'login' })
+    }
 
     return Promise.reject(error)
 })
