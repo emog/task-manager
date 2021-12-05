@@ -2,6 +2,7 @@
 
 ##Steps
 * composer install
+* npm install
 * npm run dev
 * copy .env.example to .env
 * setup DB_* values in the .env file
