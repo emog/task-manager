@@ -1,7 +1,9 @@
 import axios from 'axios';
 import NProgress from 'vue-nprogress'
 import store from '../store'
-import router from '..//router'
+import router from '../router'
+
+axios.defaults.withCredentials = true;
 
 // Use interceptor to inject the token to requests
 axios.interceptors.request.use(request => {
@@ -12,32 +14,21 @@ axios.interceptors.request.use(request => {
     return request
 })
 
-// before a request is made start the nprogress
-axios.interceptors.request.use(config => {
-    NProgress.start();
-    return config
-});
-
-// before a response is returned stop nprogress
-axios.interceptors.response.use(response => {
-    NProgress.done();
-    return response
-});
 
 axios.interceptors.response.use(response => response, error => {
-    const { status } = error.response
-    const { method } = error.config
-
-
-
-    if (status === 401 && store.getters['auth/check']) {
-        store.commit('auth/LOGOUT')
-        router.push({ name: 'login' })
-    }
-
-    if (status === 403 && store.getters['auth/check']) {
-
-    }
+    // const { status } = error.response
+    // const { method } = error.config
+    //
+    //
+    //
+    // if (status === 401 && store.getters['auth/check']) {
+    //     store.commit('auth/LOGOUT')
+    //     router.push({ name: 'login' })
+    // }
+    //
+    // if (status === 403 && store.getters['auth/check']) {
+    //
+    // }
 
     return Promise.reject(error)
 })

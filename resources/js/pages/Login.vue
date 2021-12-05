@@ -11,7 +11,11 @@
                     v-model="form.email"
                     type="email"
                     placeholder="Enter email"
+                    :state="form.errors.has('email') ? false : null"
                 ></b-form-input>
+                <b-form-invalid-feedback :state="form.errors.has('email') ? false : null">
+                    {{ form.errors.get('email') }}
+                </b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group id="input-group-password" label="Password:" label-for="password" class="mb-4">
@@ -20,7 +24,11 @@
                     type="password"
                     v-model="form.password"
                     placeholder="Enter your password"
+                    :state="form.errors.has('password') ? false : null"
                 ></b-form-input>
+                <b-form-invalid-feedback :state="form.errors.has('password') ? false : null">
+                    {{ form.errors.get('password') }}
+                </b-form-invalid-feedback>
             </b-form-group>
             <b-button type="submit" variant="primary">Login</b-button>
         </b-form>
@@ -42,11 +50,13 @@ export default {
     },
     methods: {
         async onSubmit() {
-            await this.form.post('/api/v1/auth/login').then(function (response) {
+            const vue = this;
+            await this.form.post('/api/v1/login').then(function (response) {
                 const {data} = response
-                this.$store.dispatch('auth/saveToken', {
+                vue.$store.dispatch('auth/saveToken', {
                     token: data.token,
                 })
+                vue.$router.push({ name: 'tasks' })
             });
         }
     }
