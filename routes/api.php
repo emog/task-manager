@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'task', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'task', 'middleware' => 'auth:api'], function () {
+    Route::get('/', [TaskController::class, 'getAll']);
     Route::post('/', [TaskController::class, 'create']);
     Route::put('/{id}', [TaskController::class, 'update']);
 });

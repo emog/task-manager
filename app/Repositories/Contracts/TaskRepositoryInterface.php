@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface TaskRepositoryInterface
 {
-    public function get();
+    public function getAll();
 
     public function create(array $data);
 

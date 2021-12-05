@@ -13,6 +13,11 @@ class TaskService
         $this->taskRepository = $taskRepository;
     }
 
+    public function getAll()
+    {
+        return $this->taskRepository->getAll();
+    }
+
     public function create($user_id, $data)
     {
         $data['user_id'] = $user_id;

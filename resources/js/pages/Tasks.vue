@@ -3,8 +3,12 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
-    name: "Tasks"
+    name: "Tasks",
+    mounted() {
+        axios.get('api/v1/task')
+    }
 }
 </script>
 

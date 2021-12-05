@@ -15,6 +15,31 @@ class TaskTest extends TestCase
 
     const REQUEST_HEADERS = ['Accept' => 'application/json'];
 
+    public function test_get_all_tasks()
+    {
+        $user = $this->signIn();
+        Task::factory(['user_id' => $user])->count(10)->create();
+        $response = $this->get('/api/v1/task', self::REQUEST_HEADERS);
+        $response->assertOk();
+        $response->assertJsonCount(10, 'data');
+    }
+
+    public function test_cannot_get_tasks_for_other_users()
+    {
+        $user = $this->signIn();
+        Task::factory()->count(10)->create();
+        Task::factory(['user_id' => $user])->count(1)->create();
+        $response = $this->get('/api/v1/task', self::REQUEST_HEADERS);
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
+    }
+
+    public function test_guest_cannot_get_tasks()
+    {
+        $response = $this->get('/api/v1/task', self::REQUEST_HEADERS);
+        $response->assertStatus(401);
+    }
+
     public function test_create_task()
     {
         $this->signIn();

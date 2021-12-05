@@ -8,9 +8,9 @@ use App\Repositories\Contracts\TaskRepositoryInterface;
 class TaskRepositoryEloquent implements TaskRepositoryInterface
 {
 
-    public function get()
+    public function getAll()
     {
-        // TODO: Implement get() method.
+        return Task::orderBy('created_at', 'asc')->orderBy('completed', 'desc')->get();
     }
 
     /**
