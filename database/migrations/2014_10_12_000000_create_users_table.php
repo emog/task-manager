@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
@@ -23,6 +24,8 @@ class CreateUsersTable extends Migration
             $table->timestamps();
         });
         DB::table('users')->insert(['email' => 'test@test.com', 'name' => 'Test', 'password' => Hash::make('password'), 'created_at' => now(), 'updated_at' => now()]);
+        DB::table('users')->insert(['email' => 'test1@test.com', 'name' => 'Test', 'password' => Hash::make('password'), 'created_at' => now(), 'updated_at' => now()]);
+        DB::table('users')->insert(['email' => 'test2@test.com', 'name' => 'Test', 'password' => Hash::make('password'), 'created_at' => now(), 'updated_at' => now()]);
     }
 
     /**

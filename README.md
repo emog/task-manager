@@ -13,3 +13,9 @@
 php artisan serve
 
 If you want to use docker you could use laravel sail
+
+#Default User
+email: test@test.com
+email: test1@test.com
+email: test2@test.com
+password: password
