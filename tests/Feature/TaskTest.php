@@ -13,13 +13,14 @@ class TaskTest extends TestCase
     use WithFaker;
     use LazilyRefreshDatabase;
 
+    const REQUEST_HEADERS = ['Accept' => 'application/json'];
 
     public function test_create_task()
     {
         $this->signIn();
         $name        = $this->faker->text(100);
         $description = $this->faker->text(255);
-        $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], self::REQUEST_HEADERS);
         $response->assertCreated();
         $response->assertJsonStructure(['data' => ['id', 'name', 'description', 'name', 'updated_at', 'created_at']]);
     }
@@ -28,7 +29,7 @@ class TaskTest extends TestCase
     {
         $name        = $this->faker->text(100);
         $description = $this->faker->text(255);
-        $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], self::REQUEST_HEADERS);
         $response->assertStatus(401);
     }
 
@@ -37,11 +38,11 @@ class TaskTest extends TestCase
         $this->signIn();
         $name        = $this->faker->unique->realTextBetween(256, 300);
         $description = $this->faker->unique->realTextBetween(256, 300);
-        $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], self::REQUEST_HEADERS);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name', 'description']);
 
-        $response = $this->post('/api/v1/task', [], ['Accept' => 'application/json']);
+        $response = $this->post('/api/v1/task', [], self::REQUEST_HEADERS);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name']);
     }
@@ -52,7 +53,7 @@ class TaskTest extends TestCase
         $task        = Task::factory(['user_id' => $user->id])->create();
         $name        = $this->faker->unique->text(100);
         $description = $this->faker->unique->text(255);
-        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], self::REQUEST_HEADERS);
         $response->assertOk();
     }
 
@@ -61,7 +62,7 @@ class TaskTest extends TestCase
         $task        = Task::factory()->create();
         $name        = $this->faker->text(100);
         $description = $this->faker->text(255);
-        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], self::REQUEST_HEADERS);
         $response->assertStatus(401);
     }
 
@@ -72,7 +73,7 @@ class TaskTest extends TestCase
         $name        = $this->faker->unique->realTextBetween(256, 300);
         $description = $this->faker->unique->realTextBetween(256, 300);
         $invalidId   = ($task->id + 10);
-        $response    = $this->put('/api/v1/task/' . $invalidId, ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response    = $this->put('/api/v1/task/' . $invalidId, ['name' => $name, 'description' => $description], self::REQUEST_HEADERS);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             'id'          => 'The selected id is invalid.',
@@ -80,7 +81,7 @@ class TaskTest extends TestCase
             'description' => 'The description must not be greater than 255 characters.'
         ]);
 
-        $response = $this->put('/api/v1/task/' . $invalidId, [], ['Accept' => 'application/json']);
+        $response = $this->put('/api/v1/task/' . $invalidId, [], self::REQUEST_HEADERS);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['id' => 'The selected id is invalid.', 'name' => 'The name field is required.']);
     }
@@ -91,7 +92,7 @@ class TaskTest extends TestCase
         $task        = Task::factory(['user_id' => User::factory()])->create();
         $name        = $this->faker->unique->text(100);
         $description = $this->faker->unique->text(100);
-        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], self::REQUEST_HEADERS);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['id' => 'The selected id is invalid.']);
     }
