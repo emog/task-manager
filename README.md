@@ -11,8 +11,9 @@
 
 ##Other
 php artisan serve
+If you want to use docker you could use laravel sail 
 
-If you want to use docker you could use laravel sail
+If you want to run tests you could use php artisan test
 
 #Default User
 email: test@test.com
