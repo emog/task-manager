@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\TaskScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -47,6 +48,16 @@ class Task extends Model
         'description',
         'completed'
     ];
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new TaskScope());
+    }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

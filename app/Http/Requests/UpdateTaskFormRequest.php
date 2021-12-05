@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTaskFormRequest extends FormRequest
 {
@@ -22,7 +23,10 @@ class UpdateTaskFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'id'          => 'required|exists:tasks,id',
+            'id'          => [
+                'required',
+                Rule::exists('tasks', 'id')->where('user_id', auth()->id())
+            ],
             'name'        => 'required|max:255',
             'description' => 'nullable|max:255',
         ];

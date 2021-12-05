@@ -3,20 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\Task;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class TaskTest extends TestCase
 {
     use WithFaker;
+    use LazilyRefreshDatabase;
 
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_create_task()
     {
         $this->signIn();
@@ -27,10 +24,17 @@ class TaskTest extends TestCase
         $response->assertJsonStructure(['data' => ['id', 'name', 'description', 'name', 'updated_at', 'created_at']]);
     }
 
+    public function test_guest_cannot_create_task()
+    {
+        $name        = $this->faker->text(100);
+        $description = $this->faker->text(255);
+        $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response->assertStatus(401);
+    }
+
     public function test_create_task_invalid_inputs()
     {
-        $user        = $this->signIn();
-        $task        = Task::factory(['user_id' => $user->id])->create();
+        $this->signIn();
         $name        = $this->faker->unique->realTextBetween(256, 300);
         $description = $this->faker->unique->realTextBetween(256, 300);
         $response    = $this->post('/api/v1/task', ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
@@ -42,11 +46,6 @@ class TaskTest extends TestCase
         $response->assertJsonValidationErrors(['name']);
     }
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_update_task()
     {
         $user        = $this->signIn();
@@ -55,6 +54,15 @@ class TaskTest extends TestCase
         $description = $this->faker->unique->text(255);
         $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
         $response->assertOk();
+    }
+
+    public function test_guest_cannot_update_task()
+    {
+        $task        = Task::factory()->create();
+        $name        = $this->faker->text(100);
+        $description = $this->faker->text(255);
+        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response->assertStatus(401);
     }
 
     public function test_update_task_invalid_inputs()
@@ -75,5 +83,16 @@ class TaskTest extends TestCase
         $response = $this->put('/api/v1/task/' . $invalidId, [], ['Accept' => 'application/json']);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['id' => 'The selected id is invalid.', 'name' => 'The name field is required.']);
+    }
+
+    public function test_user_cannot_update_task_for_other_user()
+    {
+        $this->signIn();
+        $task        = Task::factory(['user_id' => User::factory()])->create();
+        $name        = $this->faker->unique->text(100);
+        $description = $this->faker->unique->text(100);
+        $response    = $this->put('/api/v1/task/' . $task->id, ['name' => $name, 'description' => $description], ['Accept' => 'application/json']);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['id' => 'The selected id is invalid.']);
     }
 }
